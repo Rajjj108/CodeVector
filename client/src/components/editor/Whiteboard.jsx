@@ -441,7 +441,7 @@ const Whiteboard = ({ onClose }) => {
       const token   = localStorage.getItem("token");
       const dataUrl = canvasRef.current.toDataURL("image/png");
       await axios.post(
-        "http://localhost:5000/api/notes",
+        (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/notes",
         { title: `Whiteboard — ${new Date().toLocaleString()}`, content: `![Whiteboard](${dataUrl})\n\n*Saved from whiteboard*` },
         { headers: { Authorization: `Bearer ${token}` } }
       );

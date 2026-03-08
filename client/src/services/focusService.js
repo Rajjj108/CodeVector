@@ -73,7 +73,7 @@ const apiGet = async (url) => {
 const fetchQuestions = async (topic) => {
   const params = new URLSearchParams({ page: 1, limit: 80 });
   if (topic) params.set("topic", topic);
-  const data = await apiGet(`http://localhost:5000/api/questions?${params}`);
+  const data = await apiGet(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/questions?${params}`);
   const list = Array.isArray(data) ? data : (data.data ?? data.problems ?? []);
   return list;
 };
@@ -83,7 +83,7 @@ export const getFocusSession = async (email, progressMap = {}) => {
   // Step 1: load real topic list from DB
   let syllabus = [];
   try {
-    const topicMap = await apiGet("http://localhost:5000/api/meta/topics");
+    const topicMap = await apiGet((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/meta/topics");
     syllabus = buildSyllabus(topicMap);
   } catch (_) {}
 

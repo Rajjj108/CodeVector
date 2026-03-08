@@ -18,7 +18,7 @@ import AIReviewPanel from "../components/AIReviewPanel";
 
 /* ── Constants ── */
 const STORAGE_KEY = "dsa_notes_v2";
-const API = "http://localhost:5000";
+const API = (import.meta.env.VITE_API_URL || "http://localhost:5000");
 const SOLUTIONS_ID = "__solutions_log__";
 
 const DIFF_COLOR = { Easy: "#34d399", Medium: "#fbbf24", Hard: "#f87171" };

@@ -10,7 +10,7 @@ export const StreakProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     if (!token) return;
     try {
-      const res = await axios.get("http://localhost:5000/api/dashboard/summary", {
+      const res = await axios.get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/dashboard/summary", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data?.streak) {

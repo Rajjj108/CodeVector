@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     let cancelled = false;
     const verify = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/me");
+        const res = await axios.get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/auth/me");
         if (!cancelled) setUser(res.data.user);
       } catch {
         // 401 → not logged in, keep user = null
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   /* ── Called on logout click ── */
   const logout = useCallback(async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/logout");
+      await axios.post((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/auth/logout");
     } catch {
       // Even if request fails, clear local state
     } finally {

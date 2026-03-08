@@ -41,7 +41,7 @@ const GoogleLoginButton = () => {
       setError("");
       // Button pulse while loading
       gsap.to(btnRef.current, { scale: 0.97, duration: 0.2 });
-      const res = await axios.post("http://localhost:5000/api/auth/google", {
+      const res = await axios.post((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/auth/google", {
         token: credentialResponse.credential,
       }, { withCredentials: true });
       login(res.data.user); // update AuthContext — cookie is set by server

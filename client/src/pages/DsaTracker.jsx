@@ -101,7 +101,7 @@ const DsaTracker = () => {
      ───────────────────────────────────────────── */
   const fetchSummary = useCallback(() => {
     axios
-      .get("http://localhost:5000/api/dashboard/summary", { headers: authHeader() })
+      .get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/dashboard/summary", { headers: authHeader() })
       .then(r => setSummary(r.data))
       .catch(console.error);
   }, []);
@@ -113,7 +113,7 @@ const DsaTracker = () => {
      ───────────────────────────────────────────── */
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/meta/topics")
+      .get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/meta/topics")
       .then(r => {
         setTopicList(Object.keys(r.data));
         setTopicTotals(r.data);
@@ -138,9 +138,9 @@ const DsaTracker = () => {
 
       // Fetch questions + progress map in parallel (progress only on page 1)
       const [qRes, progRes] = await Promise.all([
-        axios.get(`http://localhost:5000/api/questions?${params}`),
+        axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/questions?${params}`),
         pageNum === 1
-          ? axios.get("http://localhost:5000/api/progress", { headers: authHeader() }).catch(() => null)
+          ? axios.get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/progress", { headers: authHeader() }).catch(() => null)
           : Promise.resolve(null),
       ]);
 
@@ -258,7 +258,7 @@ const DsaTracker = () => {
   const updateStatus = async (problemId, newStatus) => {
     try {
       await axios.post(
-        "http://localhost:5000/api/progress/update",
+        (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/progress/update",
         { problemId, status: newStatus },
         { headers: authHeader() }
       );

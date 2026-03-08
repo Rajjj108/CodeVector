@@ -109,7 +109,7 @@ const CodeEditor = () => {
     const fetchProblem = async () => {
       try {
         console.log("Fetching:", id);
-        const res = await axios.get(`http://localhost:5000/api/questions/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/questions/${id}`);
         console.log("FULL API RESPONSE:", res.data);
 
         // Normalize: handle { data: {...} }, { question: {...} }, or flat object
@@ -220,7 +220,7 @@ const CodeEditor = () => {
       setResult(null);
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5000/api/code/run",
+        (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/code/run",
         { problemId: id, code, language },
         { headers: token ? { Authorization: `Bearer ${token}` } : {} }
       );
@@ -257,7 +257,7 @@ const CodeEditor = () => {
       setResult(null);
       const token  = localStorage.getItem("token");
       const res    = await axios.post(
-        "http://localhost:5000/api/submissions/submit",
+        (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/submissions/submit",
         {
           problemId: id,
           code,

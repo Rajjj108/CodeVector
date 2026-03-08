@@ -153,7 +153,7 @@ const Dashboard = () => {
 
   /* ── Fetch dashboard summary (streak, accuracy, solved, difficulty) ── */
   useEffect(() => {
-    axios.get("http://localhost:5000/api/dashboard/summary", { withCredentials: true })
+    axios.get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/dashboard/summary", { withCredentials: true })
       .then(r => setUser(r.data))
       .catch(() => {});
   }, []);

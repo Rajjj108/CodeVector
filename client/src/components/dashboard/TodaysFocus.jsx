@@ -48,9 +48,9 @@ const TodaysFocus = () => {
 
       // Fetch focus problems + solved IDs in parallel from MongoDB
       const [focusRes, progressRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/dashboard/focus", { headers }),
+        axios.get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/dashboard/focus", { headers }),
         token
-          ? axios.get("http://localhost:5000/api/progress/solved-ids", { headers })
+          ? axios.get((import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api/progress/solved-ids", { headers })
           : Promise.resolve({ data: {} }),
       ]);
 

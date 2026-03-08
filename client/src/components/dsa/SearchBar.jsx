@@ -17,7 +17,7 @@ const SearchBar = () => {
     }
     
     try {
-      const res = await axios.get(`http://localhost:5000/api/search?q=${encodeURIComponent(val)}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/search?q=${encodeURIComponent(val)}`);
       setResults(res.data.slice(0, 8));
     } catch (err) {
       console.error("Search error:", err);
