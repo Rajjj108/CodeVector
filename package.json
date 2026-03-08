@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "node server/server.js",
     "dev": "node --watch server/server.js",
     "rebuild:problems": "node server/scripts/rebuildAllProblemsFixed.js"
   },
