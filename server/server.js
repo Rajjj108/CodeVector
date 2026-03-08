@@ -28,7 +28,7 @@ import { fork } from "child_process";
 
 
 
-
+console.log("Server starting...");
 
 
 /* ===== Fix __dirname ===== */
