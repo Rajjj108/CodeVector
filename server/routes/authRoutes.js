@@ -1,0 +1,28 @@
+import express from "express";
+import {
+  signupUser,
+  loginUser,
+  googleLogin,
+  getCurrentUser,
+  logoutUser,
+} from "../controllers/authController.js";
+import protect from "../middleware/authMiddleware.js";
+import { loginLimiter, signupLimiter } from "../middleware/rateLimiter.js";
+
+const router = express.Router();
+
+/* ========= PUBLIC ROUTES ========= */
+
+router.post("/signup", signupLimiter, signupUser);
+router.post("/login",  loginLimiter,  loginUser);
+router.post("/google", loginLimiter,  googleLogin);
+
+/* ========= PROTECTED ROUTES ========= */
+
+// Logout requires a valid session (so we can blacklist the token)
+router.post("/logout", protect, logoutUser);
+
+// Get current authenticated user (used by AuthContext on page load)
+router.get("/me", protect, getCurrentUser);
+
+export default router;

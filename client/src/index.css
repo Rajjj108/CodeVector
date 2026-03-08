@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Bungee&family=Cinzel:wght@400..900&family=Kavoon&family=Oi&family=Orbitron:wght@400..900&family=Rubik+Wet+Paint&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   Font tokens
+   ───────────────────────────────────────────── */
+:root {
+  --font-display:  'Orbitron', sans-serif;
+  --font-elegant: 'bungee';
+  --font-brand:    'Bungee' sans-serif;
+  --font-mono:     'DM Mono', monospace;
+  --font-body:     'DM Sans', sans-serif;
+}
+/* ─────────────────────────────────────────────
+   THEME: Cyber (neon dark default)
+   ───────────────────────────────────────────── */
+:root,
+html[data-theme="cyber"] {
+  --bg:              #03040c;
+  --bg-card:         rgba(255,255,255,0.04);
+  --border:          rgba(255,255,255,0.08);
+  --border-top:      rgba(255,255,255,0.13);
+  --text-primary:    #e2e8f0;
+  --text-secondary:  rgba(148,163,184,0.7);
+  --text-muted:      rgba(148,163,184,0.35);
+  --accent:          #a78bfa;
+  --accent-glow:     rgba(167,139,250,0.35);
+  --accent2:         #22d3ee;
+  --accent2-glow:    rgba(34,211,238,0.35);
+  --accent3:         #34d399;
+  --nav-bg:          rgba(3,4,12,0.82);
+  --scrollbar:       rgba(167,139,250,0.18);
+  --scrollbar-hover: rgba(167,139,250,0.38);
+  --glass:           blur(32px) saturate(160%);
+  --shadow:          0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* ─────────────────────────────────────────────
+   THEME: Night (deep minimal dark)
+   ───────────────────────────────────────────── */
+html[data-theme="night"] {
+  --bg:              #060810;
+  --bg-card:         rgba(255,255,255,0.025);
+  --border:          rgba(255,255,255,0.05);
+  --border-top:      rgba(255,255,255,0.09);
+  --text-primary:    #c8d8e8;
+  --text-secondary:  rgba(148,163,184,0.55);
+  --text-muted:      rgba(148,163,184,0.28);
+  --accent:          #60a5fa;
+  --accent-glow:     rgba(96,165,250,0.25);
+  --accent2:         #818cf8;
+  --accent2-glow:    rgba(129,140,248,0.25);
+  --accent3:         #34d399;
+  --nav-bg:          rgba(6,8,16,0.9);
+  --scrollbar:       rgba(96,165,250,0.15);
+  --scrollbar-hover: rgba(96,165,250,0.35);
+  --glass:           blur(24px) saturate(120%);
+  --shadow:          0 8px 32px rgba(0,0,0,0.6);
+}
+
+
+
+/* ─────────────────────────────────────────────
+   Global base
+   ───────────────────────────────────────────── */
+html, body, #root {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  font-family: var(--font-body);
+  transition: background 0.45s ease, color 0.35s ease;
+}
+
+/* ─────────────────────────────────────────────
+   Smooth theme transitions
+   ───────────────────────────────────────────── */
+*, *::before, *::after {
+  transition: background-color 0.4s ease, border-color 0.35s ease, color 0.3s ease, box-shadow 0.35s ease;
+}
+.no-theme-transition, canvas { transition: none !important; }
+
+/* ─────────────────────────────────────────────
+   Headings
+   ───────────────────────────────────────────── */
+h1 { font-family: var(--font-elegant); font-weight: 700; letter-spacing: 0.04em; }
+h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.06em; }
+h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.04em; }
+
+/* ─────────────────────────────────────────────
+   Scrollbar
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; }
+
+/* ─────────────────────────────────────────────
+   Focus/button resets
+   ───────────────────────────────────────────── */
+button { border: none !important; outline: none !important; }
+button:focus, button:focus-visible { outline: none !important; box-shadow: none !important; }
+*:focus { outline: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   DAY MODE OVERRIDES
+   ═══════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────────
+   STEP 1 — Make ALL text dark navy #011023
+   Browsers normalize inline style values, so we force
+   with !important on every element
+   ─────────────────────────────────────────────────────── */
+html[data-theme="day"] * {
+  color: #011023 !important;
+  -webkit-text-fill-color: #011023 !important;
+}
+
+/* ───────────────────────────────────────────────────────
+   STEP 2 — Monaco editor: higher specificity to escape
+   the universal rule. The [data-monaco-root] attr is
+   added to the wrapper div in EditorPanel.jsx
+   ─────────────────────────────────────────────────────── */
+html[data-theme="day"] [data-monaco-root] *,
+html[data-theme="day"] [data-monaco-root] {
+  color: initial !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+/* ───────────────────────────────────────────────────────
+   STEP 3 — Restore specific badge / accent colours
+   Match BOTH browser-normalized (spaces) and raw (no spaces)
+   ─────────────────────────────────────────────────────── */
+/* Green - EASY */
+html[data-theme="day"] [style*="34d399"],html[data-theme="day"] [style*="34,211,153"],html[data-theme="day"] [style*="34, 211, 153"] { color: #047857 !important; -webkit-text-fill-color: #047857 !important; }
+/* Amber - MEDIUM */
+html[data-theme="day"] [style*="fbbf24"],html[data-theme="day"] [style*="251,191,36"],html[data-theme="day"] [style*="251, 191, 36"],html[data-theme="day"] [style*="f59e0b"],html[data-theme="day"] [style*="245,158,11"],html[data-theme="day"] [style*="245, 158, 11"] { color: #92400e !important; -webkit-text-fill-color: #92400e !important; }
+/* Red - HARD */
+html[data-theme="day"] [style*="f87171"],html[data-theme="day"] [style*="248,113,113"],html[data-theme="day"] [style*="248, 113, 113"],html[data-theme="day"] [style*="ef4444"],html[data-theme="day"] [style*="239,68,68"],html[data-theme="day"] [style*="239, 68, 68"] { color: #b91c1c !important; -webkit-text-fill-color: #b91c1c !important; }
+/* Cyan */
+html[data-theme="day"] [style*="22d3ee"],html[data-theme="day"] [style*="34,211,238"],html[data-theme="day"] [style*="34, 211, 238"] { color: #0284c7 !important; -webkit-text-fill-color: #0284c7 !important; }
+/* Purple */
+html[data-theme="day"] [style*="a78bfa"],html[data-theme="day"] [style*="167,139,250"],html[data-theme="day"] [style*="167, 139, 250"] { color: #5b21b6 !important; -webkit-text-fill-color: #5b21b6 !important; }
+/* Pink */
+html[data-theme="day"] [style*="f472b6"],html[data-theme="day"] [style*="244,114,182"],html[data-theme="day"] [style*="244, 114, 182"] { color: #9d174d !important; -webkit-text-fill-color: #9d174d !important; }
+/* Logout hover */
+html[data-theme="day"] .logout-text { color: rgba(185,28,28,0.45) !important; -webkit-text-fill-color: rgba(185,28,28,0.45) !important; }
+
+/* ── .glass-card component — white glass in day (matches DSA tracker screenshot) ── */
+html[data-theme="day"] .glass-card {
+  background: rgba(255,255,255,0.78) !important;
+  border-color: rgba(82,127,176,0.2) !important;
+  border-top-color: rgba(82,127,176,0.35) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 28px rgba(5,37,88,0.1) !important;
+}
+/* ── .hover-row component — subtle navy tint rows ── */
+html[data-theme="day"] .hover-row {
+  background: rgba(5,37,88,0.03) !important;
+  border-color: rgba(82,127,176,0.1) !important;
+}
+
+/* Faintest panels (0.02–0.05) → hover rows */
+html[data-theme="day"] div[style*="rgba(255,255,255,0.02"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.02"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.03"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.03"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.04"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.04"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.05"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.05"] {
+  background: rgba(5,37,88,0.08) !important;
+  border-color: rgba(5,37,88,0.16) !important;
+}
+
+/* Mid panels (0.06–0.09) */
+html[data-theme="day"] div[style*="rgba(255,255,255,0.06"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.06"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.07"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.07"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.08"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.08"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.09"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.09"] {
+  background: rgba(5,37,88,0.11) !important;
+  border-color: rgba(5,37,88,0.2) !important;
+  box-shadow: 0 4px 20px rgba(5,37,88,0.1) !important;
+}
+
+/* Visible panels (0.10+) → main cards */
+html[data-theme="day"] div[style*="rgba(255,255,255,0.1"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.1"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.2"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.2"],
+html[data-theme="day"] div[style*="rgba(255,255,255,0.3"],
+html[data-theme="day"] div[style*="rgba(255, 255, 255, 0.3"] {
+  background: rgba(5,37,88,0.13) !important;
+  border-color: rgba(5,37,88,0.24) !important;
+  box-shadow: 0 6px 28px rgba(5,37,88,0.13) !important;
+}
+
+/* Gradient cards (linear-gradient with white) */
+html[data-theme="day"] div[style*="linear-gradient(135deg, rgba(255"],
+html[data-theme="day"] div[style*="linear-gradient(135deg,rgba(255"] {
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(194,232,255,0.65) 100%) !important;
+  border-color: rgba(5,37,88,0.15) !important;
+  box-shadow: 0 4px 24px rgba(5,37,88,0.1), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+}
+
+/* Dark overlays (rgba(0,0,0,...)) → light navy wash */
+html[data-theme="day"] div[style*="rgba(0,0,0,0.2"],
+html[data-theme="day"] div[style*="rgba(0, 0, 0, 0.2"],
+html[data-theme="day"] div[style*="rgba(0,0,0,0.3"],
+html[data-theme="day"] div[style*="rgba(0, 0, 0, 0.3"],
+html[data-theme="day"] div[style*="rgba(0,0,0,0.4"],
+html[data-theme="day"] div[style*="rgba(0, 0, 0, 0.4"] {
+  background: rgba(5,37,88,0.06) !important;
+  border-color: rgba(5,37,88,0.12) !important;
+}
+
+/* Also catch thin lines / dividers inside any element */
+html[data-theme="day"] [style*="rgba(255,255,255,0.06)"],
+html[data-theme="day"] [style*="rgba(255, 255, 255, 0.06)"],
+html[data-theme="day"] [style*="rgba(255,255,255,0.07)"],
+html[data-theme="day"] [style*="rgba(255, 255, 255, 0.07)"] {
+  background: rgba(5,37,88,0.14) !important;
+}
+
+/* ── Header nav-bar ── */
+html[data-theme="day"] header {
+  background: rgba(194,232,255,0.9) !important;
+  border-bottom-color: rgba(5,37,88,0.1) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+}
+
+/* ─────────────────────────────────────────────
+   Keyframes
+   ───────────────────────────────────────────── */
+@keyframes spin      { to { transform: rotate(360deg); } }
+@keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.78)} }
+@keyframes float1    { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,40px)} }
+@keyframes float2    { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,-30px)} }
+@keyframes float3    { 0%,100%{transform:translate(0,0)} 50%{transform:translate(18px,-22px)} }
+@keyframes fadeUp    { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes shake     { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mobile first
+   Mobile  < 640px
+   Tablet  640–1023px
+   Desktop ≥ 1024px
+   ═══════════════════════════════════════════════ */
+
+/* ── Utility classes generated by JS (via className) ── */
+.resp-grid-2    { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.resp-grid-4    { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.resp-col       { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Global touch improvements ── */
+@media (max-width: 639px) {
+  /* Larger touch targets */
+  button { min-height: 36px; }
+
+  /* Header: compact padding */
+  header { padding: 12px 16px !important; }
+
+  /* PageHeader title shrink */
+  header h1 { font-size: 18px !important; }
+
+  /* Dashboard sections: single column */
+  .dash-grid-2col  { grid-template-columns: 1fr !important; }
+  .dash-profile    { grid-template-columns: 1fr !important; }
+
+  /* Stat strip: 2 cols on mobile */
+  .stat-strip-4    { grid-template-columns: 1fr 1fr !important; }
+
+  /* DSA tracker: hide sidebar, show toggle */
+  .dsa-sidebar-desktop { display: none !important; }
+  .dsa-sidebar-mobile  { display: flex !important; }
+
+  /* CodeEditor: full-width panel when in mobile tab mode */
+  .editor-tab-panel    { display: none; }
+  .editor-tab-panel.active { display: flex !important; }
+
+  /* Whiteboard toolbar: scroll horizontally */
+  .wb-toolbar    { overflow-x: auto !important; flex-wrap: nowrap !important; }
+  .wb-palette    { flex-wrap: nowrap !important; }
+
+  /* Tables: horizontal scroll */
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Notes page */
+  .notes-layout  { flex-direction: column !important; }
+  .notes-sidebar { width: 100% !important; max-height: 220px; overflow-y: auto; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+  /* Section padding */
+  .dash-inner-pad { padding: 12px 14px 0 !important; }
+  .page-pad       { padding: 0 14px 40px !important; }
+
+  /* Login/Signup card */
+  .auth-card      { padding: 28px 20px !important; margin: 16px !important; }
+}
+
+@media (max-width: 767px) {
+  /* 2-column stat strip still fits on small tablet */
+  .stat-strip-4 { grid-template-columns: 1fr 1fr !important; }
+
+  /* Dashboard 2-col grids → 1-col */
+  .dash-grid-2col { grid-template-columns: 1fr !important; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Tablet: keep 2-col stat strip */
+  .stat-strip-4   { grid-template-columns: 1fr 1fr !important; }
+
+  /* Sidebar narrow tablet: collapsible */
+  .dsa-sidebar-desktop { width: 200px !important; }
+
+  /* Header padding */
+  header { padding: 14px 24px !important; }
+
+  /* Dashboard inner padding */
+  .dash-inner-pad { padding: 16px 22px 0 !important; }
+}
+
+/* ── Editor mobile tab bar ── */
+.editor-tab-bar {
+  display: none;
+}
+@media (max-width: 639px) {
+  .editor-tab-bar {
+    display: flex;
+    position: sticky; top: 57px; z-index: 30;
+    background: rgba(6,8,16,0.95);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(16px);
+  }
+  .editor-tab-bar button {
+    flex: 1; padding: 10px 6px; font-size: 9px;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.15em;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    background: transparent; cursor: pointer;
+    transition: all 0.18s;
+  }
+  .editor-tab-bar button.active {
+    background: rgba(167,139,250,0.12);
+    color: #a78bfa !important;
+    -webkit-text-fill-color: #a78bfa !important;
+  }
+  .editor-mobile-layout {
+    flex-direction: column !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+}
