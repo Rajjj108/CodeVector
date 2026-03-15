@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CodeEditor from "./pages/CodeEditor";
 import Notes from "./pages/Notes";
 import AppLayout from "./components/AppLayout";
+import Landing from "./pages/Landing";
 
 /**
  * Root route guard — shows spinner while session check is in-flight,
@@ -35,9 +36,8 @@ const RootRedirect = () => {
     );
   }
 
-  return user ? <Navigate to="/dashboard" replace /> : <Login />;
+  return user ? <Navigate to="/dashboard" replace /> : <Landing />;
 };
-
 function App() {
   const { user, loading } = useAuth();
 
@@ -47,7 +47,8 @@ function App() {
         {/* Root: verified server-side, no infinite loops */}
         <Route path="/" element={<RootRedirect />} />
 
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Signup />} />
+        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
 
         <Route path="/dsa-tracker" element={
           <ProtectedRoute><DsaTracker /></ProtectedRoute>

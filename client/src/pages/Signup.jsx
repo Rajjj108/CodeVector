@@ -460,7 +460,7 @@ const Signup = () => {
           <GoogleLoginButton />
 
           <div className="su-footer">
-            <p>Already have an account? <Link to="/">Back to Login</Link></p>
+            <p>Already have an account? <Link to="/login">Back to Login</Link></p>
           </div>
         </div>
       </div>
