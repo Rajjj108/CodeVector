@@ -63,7 +63,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://codevector.onrender.com"
+    "https://codevector.onrender.com",
+    "https://codevectorweb.vercel.app"
   ],
   methods: ["GET","POST","PUT","DELETE"],
   credentials: true
