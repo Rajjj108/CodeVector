@@ -1,38 +1,23 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 
-const createTransporter = () => {
-  const port = parseInt(process.env.SMTP_PORT) || 587;
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.ethereal.email",
-    port: port,
-    secure: port === 465, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-};
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (options) => {
   try {
-    const transporter = createTransporter();
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || "noreply@codevector.com",
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
       to: options.email,
       subject: options.subject,
       html: options.html,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully!");
-    
-    // Log the Ethereal URL when using testing credentials
-    if (!process.env.SMTP_HOST || process.env.SMTP_HOST.includes("ethereal")) {
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    if (error) {
+      console.error("Resend API Error:", error);
+      throw new Error(`Could not send email: ${error.message}`);
     }
-    
-    return info;
+
+    console.log("Email sent successfully via Resend!", data);
+    return data;
   } catch (error) {
     console.error("Error sending email:", error);
     throw new Error("Could not send email. Please try again later.");

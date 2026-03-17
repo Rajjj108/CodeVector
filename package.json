@@ -31,9 +31,9 @@
     "mongodb": "^7.1.0",
     "mongoose": "^9.2.1",
     "node-cron": "^4.2.1",
-    "nodemailer": "^8.0.2",
     "react-calendar-heatmap": "^1.10.0",
-    "recharts": "^3.7.0"
+    "recharts": "^3.7.0",
+    "resend": "^6.9.4"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
