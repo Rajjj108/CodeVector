@@ -124,43 +124,16 @@ export const sendOtp = async (req, res) => {
       { upsert: true, new: true }
     );
 
+    // Send email
     const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f4f4f5; margin: 0; padding: 0; }
-          .container { max-width: 500px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
-          .header { background: linear-gradient(135deg, #4f35e8 0%, #3730dc 100%); padding: 32px 24px; text-align: center; }
-          .header h1 { color: #ffffff; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
-          .content { padding: 40px 32px; text-align: center; }
-          .content p { color: #52525b; font-size: 15px; line-height: 1.6; margin: 0 0 24px; }
-          .otp-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin: 32px 0; }
-          .otp-code { font-size: 36px; font-weight: 700; color: #0f172a; letter-spacing: 8px; margin: 0; font-family: monospace; }
-          .footer { background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0; }
-          .footer p { color: #94a3b8; font-size: 13px; margin: 0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>🔒 Verify Your Identity</h1>
-          </div>
-          <div class="content">
-            <p>Hello,</p>
-            <p>You recently requested to sign in or create an account. Use the verification code below to complete the process. This code is valid for <strong>5 minutes</strong>.</p>
-            <div class="otp-box">
-              <p class="otp-code">${otp}</p>
-            </div>
-            <p style="font-size: 13px; color: #71717a;">If you didn't request this code, you can safely ignore this email.</p>
-          </div>
-          <div class="footer">
-            <p>&copy; ${new Date().getFullYear()} InterviewPrep. All rights reserved.</p>
-          </div>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #10b981; text-align: center;">Your Verification Code</h2>
+        <p style="color: #333; font-size: 16px;">Please use the following OTP to complete your registration. This code will expire in 5 minutes.</p>
+        <div style="background-color: #f4f4f4; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
+          <h1 style="letter-spacing: 5px; margin: 0; color: #333;">${otp}</h1>
         </div>
-      </body>
-      </html>
+        <p style="color: #777; font-size: 14px; text-align: center;">If you did not request this, please ignore this email.</p>
+      </div>
     `;
 
     await sendEmail({
