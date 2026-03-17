@@ -1,11 +1,9 @@
 import crypto from "crypto";
 import User from "../models/User.js";
-import OTP from "../models/OTP.js";
 import BlacklistedToken from "../models/BlacklistedToken.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
-import { sendEmail } from "../utils/sendEmail.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -89,105 +87,10 @@ export const googleLogin = async (req, res) => {
   }
 };
 
-/* ================= OTP LOGIC ================= */
-
-export const sendOtp = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ success: false, message: "Email is required" });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ success: false, message: "User already exists with this email" });
-    }
-
-    // Generate 6 digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Hash OTP
-    const salt = await bcrypt.genSalt(10);
-    const hashedOtp = await bcrypt.hash(otp, salt);
-
-    // Save to database (upsert to overwrite previous unverified OTP)
-    await OTP.findOneAndUpdate(
-      { email },
-      { 
-        otp: hashedOtp, 
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes expiry
-        attempts: 0,
-        verified: false
-      },
-      { upsert: true, new: true }
-    );
-
-    // Send email
-    const emailHtml = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-        <h2 style="color: #10b981; text-align: center;">Your Verification Code</h2>
-        <p style="color: #333; font-size: 16px;">Please use the following OTP to complete your registration. This code will expire in 5 minutes.</p>
-        <div style="background-color: #f4f4f4; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
-          <h1 style="letter-spacing: 5px; margin: 0; color: #333;">${otp}</h1>
-        </div>
-        <p style="color: #777; font-size: 14px; text-align: center;">If you did not request this, please ignore this email.</p>
-      </div>
-    `;
-
-    await sendEmail({
-      email,
-      subject: "CodeVector Verification Code",
-      html: emailHtml
-    });
-
-    res.status(200).json({ success: true, message: "OTP sent successfully" });
-  } catch (error) {
-    console.error("Send OTP Error:", error);
-    res.status(500).json({ success: false, message: "Failed to send OTP" });
-  }
-};
-
-export const verifyOtp = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    if (!email || !otp) {
-      return res.status(400).json({ success: false, message: "Email and OTP are required" });
-    }
-
-    const otpRecord = await OTP.findOne({ email });
-
-    if (!otpRecord) {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-
-    if (otpRecord.attempts >= 5) {
-      return res.status(429).json({ success: false, message: "Too many failed attempts. Please request a new OTP." });
-    }
-
-    const isMatch = await bcrypt.compare(otp, otpRecord.otp);
-
-    if (!isMatch) {
-      otpRecord.attempts += 1;
-      await otpRecord.save();
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-
-    otpRecord.verified = true;
-    await otpRecord.save();
-
-    res.status(200).json({ success: true, message: "OTP verified successfully" });
-  } catch (error) {
-    console.error("Verify OTP Error:", error);
-    res.status(500).json({ success: false, message: "Verification failed" });
-  }
-};
 
 /* ================= REGISTER ================= */
 
-export const registerUser = async (req, res) => {
+export const signupUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -195,16 +98,6 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
-      });
-    }
-
-    // Verify OTP first
-    const otpRecord = await OTP.findOne({ email });
-
-    if (!otpRecord || !otpRecord.verified) {
-      return res.status(403).json({
-        success: false,
-        message: "Email not verified. Please verify OTP first.",
       });
     }
 
@@ -225,9 +118,6 @@ export const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-
-    // Delete OTP record after successful registration to clean up
-    await OTP.deleteOne({ email });
 
     res.status(201).json({
       success: true,
