@@ -1,19 +1,24 @@
 import express from "express";
 import {
-  signupUser,
+  registerUser,
+  sendOtp,
+  verifyOtp,
   loginUser,
   googleLogin,
   getCurrentUser,
   logoutUser,
 } from "../controllers/authController.js";
 import protect from "../middleware/authMiddleware.js";
-import { loginLimiter, signupLimiter } from "../middleware/rateLimiter.js";
+import { loginLimiter, signupLimiter, otpReqLimiter, otpVerifyLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
 /* ========= PUBLIC ROUTES ========= */
 
-router.post("/signup", signupLimiter, signupUser);
+router.post("/send-otp", otpReqLimiter, sendOtp);
+router.post("/verify-otp", otpVerifyLimiter, verifyOtp);
+router.post("/register", signupLimiter, registerUser);
+
 router.post("/login",  loginLimiter,  loginUser);
 router.post("/google", loginLimiter,  googleLogin);
 

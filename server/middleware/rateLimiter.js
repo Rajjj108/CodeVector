@@ -34,3 +34,37 @@ export const signupLimiter = rateLimit({
     res.status(options.statusCode).json(options.message);
   },
 });
+
+/**
+ * otpReqLimiter — strict: 1 request per minute per IP.
+ */
+export const otpReqLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 1, // Only 1 request allowed per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many OTP requests. Please wait a minute before trying again.",
+  },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  },
+});
+
+/**
+ * otpVerifyLimiter — block after too many failed attempts (5 per 15 mins).
+ */
+export const otpVerifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many failed OTP verification attempts. Please try again later.",
+  },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  },
+});

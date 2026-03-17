@@ -19,7 +19,9 @@ const getStrength = (password) => {
 const Signup = () => {
   const navigate = useNavigate();
 
-  const [form, setForm]           = useState({ name: "", email: "", password: "" });
+  // 1: Email, 2: OTP, 3: Details (Name, Pass)
+  const [step, setStep]           = useState(1);
+  const [form, setForm]           = useState({ name: "", email: "", password: "", otp: "" });
   const [error, setError]         = useState("");
   const [confirm, setConfirm]     = useState("");
   const [focused, setFocused]     = useState("");
@@ -34,16 +36,47 @@ const Signup = () => {
     if (error) setError("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await API.post("/auth/send-otp", { email: form.email });
+      setStep(2);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await API.post("/auth/verify-otp", { email: form.email, otp: form.otp });
+      // OTP verified successfully, proceed to details step
+      setStep(3);
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid or expired OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (form.password.length < 6) return setError("Password must be at least 6 characters.");
     if (form.password !== confirm)  return setError("Passwords do not match.");
     setLoading(true);
     try {
-      await API.post("/auth/signup", form);
-      navigate("/");
+      await API.post("/auth/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password
+      });
+      navigate("/login"); // Direct to login instead of home to ensure clean session
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed");
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -129,6 +162,7 @@ const Signup = () => {
             0 0 80px rgba(16,185,129,0.06),
             0 0 0 1px rgba(255,255,255,0.04);
           animation:cardIn 0.8s cubic-bezier(0.16,1,0.3,1) both;
+          transition: height 0.3s ease;
         }
         @keyframes cardIn {
           from{opacity:0;transform:translateY(40px) scale(0.96);filter:blur(6px)}
@@ -152,21 +186,24 @@ const Signup = () => {
         }
         @keyframes glowPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.75)}}
 
-        /* Badge */
-        .su-badge {
-          display:inline-flex;align-items:center;gap:7px;
-          background:rgba(16,185,129,0.09);
-          border:1px solid rgba(16,185,129,0.22);
-          border-radius:100px;padding:5px 14px 5px 9px;
-          margin-bottom:18px;
-          animation:fadeUp 0.5s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+        /* Step Indicators */
+        .su-steps-wrapper {
+          display: flex; justify-content: center; gap: 8px; margin-bottom: 24px;
+          animation: fadeUp 0.5s 0.05s both;
         }
-        .su-badge-dot{width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px rgba(16,185,129,0.7);}
-        .su-badge-text{font-family:'DM Mono',monospace;font-size:8.5px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:#10b981;}
+        .su-step-dot {
+          width: 8px; height: 8px; border-radius: 50%;
+          background: rgba(255,255,255,0.1);
+          transition: all 0.3s ease;
+        }
+        .su-step-dot.active {
+          background: #10b981; width: 24px; border-radius: 4px;
+          box-shadow: 0 0 8px rgba(16,185,129,0.6);
+        }
 
         .su-title {
           font-family:var(--font-display);font-size:30px;font-weight:900;letter-spacing:-0.04em;
-          margin-bottom:5px;color:#f1f5f9;
+          margin-bottom:5px;color:#f1f5f9; text-align: center;
           animation:fadeUp 0.5s 0.15s cubic-bezier(0.16,1,0.3,1) both;
         }
         .su-title .grad {
@@ -174,7 +211,7 @@ const Signup = () => {
           -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
         }
         .su-sub {
-          font-size:12.5px;color:rgba(148,163,184,0.45);font-weight:300;margin-bottom:28px;
+          font-size:12.5px;color:rgba(148,163,184,0.45);font-weight:300;margin-bottom:28px; text-align: center;
           animation:fadeUp 0.5s 0.2s cubic-bezier(0.16,1,0.3,1) both;
         }
 
@@ -214,7 +251,14 @@ const Signup = () => {
           outline:none;caret-color:#10b981;
           transition:border-color 0.3s,background 0.3s,box-shadow 0.3s;
         }
-        .su-input::placeholder{color:rgba(255,255,255,0.14);}
+        .su-input.otp-input {
+           font-family: 'DM Mono', monospace;
+           letter-spacing: 0.5em; /* 5px equivalent */
+           font-size: 18px;
+           text-align: center;
+           padding-right: 16px;
+        }
+        .su-input::placeholder{color:rgba(255,255,255,0.14); letter-spacing: normal;}
         .su-input:focus{
           background:rgba(16,185,129,0.07);
           border-color:rgba(16,185,129,0.4);
@@ -262,7 +306,7 @@ const Signup = () => {
 
         /* Submit btn */
         .su-btn{
-          position:relative;width:100%;padding:14px;margin-top:4px;
+          position:relative;width:100%;padding:14px;margin-top:20px;
           background:linear-gradient(135deg,#059669 0%,#10b981 40%,#6366f1 100%);
           background-size:200% 200%;
           border:none;border-radius:14px;
@@ -285,6 +329,14 @@ const Signup = () => {
           transform:translateX(-100%);transition:transform 0.55s ease;
         }
         .su-btn:hover::after{transform:translateX(100%);}
+
+        .su-back-btn {
+          background: transparent; border: none; color: rgba(148,163,184,0.6);
+          font-size: 12px; cursor: pointer; text-decoration: underline; margin-top: 10px;
+          transition: color 0.2s; font-family:var(--font-body); width: 100%; text-align: center;
+          animation:fadeUp 0.5s 0.49s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .su-back-btn:hover { color: #f1f5f9; }
 
         .su-spinner{
           display:inline-block;width:13px;height:13px;
@@ -333,16 +385,22 @@ const Signup = () => {
         ))}
 
         <div className="su-card">
-          {/* Badge */}
-          <div className="su-badge">
-            <div className="su-badge-dot" />
-            <span className="su-badge-text">New Account</span>
+          <div className="su-steps-wrapper">
+             <div className={`su-step-dot ${step >= 1 ? "active" : ""}`} />
+             <div className={`su-step-dot ${step >= 2 ? "active" : ""}`} />
+             <div className={`su-step-dot ${step >= 3 ? "active" : ""}`} />
           </div>
 
           <h1 className="su-title">
-            Join the <span className="grad">Journey</span>
+            {step === 1 && <><span className="grad">Email</span> Check</>}
+            {step === 2 && <><span className="grad">Verify</span> Code</>}
+            {step === 3 && <>Secure your <span className="grad">Account</span></>}
           </h1>
-          <p className="su-sub">Create your account and start practicing today</p>
+          <p className="su-sub">
+            {step === 1 && "We'll send you an OTP to verify your email."}
+            {step === 2 && `Enter the 6-digit code sent to ${form.email}.`}
+            {step === 3 && "You're almost there! Complete your details."}
+          </p>
 
           {error && (
             <div className="su-error">
@@ -350,118 +408,160 @@ const Signup = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="su-form">
-
-            {/* Name */}
-            <div className={`su-field${focused === "name" ? " focused" : ""}`}>
-              <div className="su-label-row">Full Name</div>
-              <div className="su-iw">
-                <input
-                  type="text" name="name"
-                  placeholder="Your full name"
-                  className={`su-input${form.name.length > 1 ? " valid" : ""}`}
-                  onChange={handleChange}
-                  onFocus={() => setFocused("name")}
-                  onBlur={() => setFocused("")}
-                  required
-                />
+          {/* === STEP 1: EMAIL === */}
+          {step === 1 && (
+            <form onSubmit={handleSendOtp} className="su-form">
+              <div className={`su-field${focused === "email" ? " focused" : ""}`}>
+                <div className="su-label-row">Email Address</div>
+                <div className="su-iw">
+                  <input
+                    type="email" name="email"
+                    placeholder="you@example.com"
+                    className={`su-input${form.email.includes("@") ? " valid" : ""}`}
+                    value={form.email}
+                    onChange={handleChange}
+                    onFocus={() => setFocused("email")}
+                    onBlur={() => setFocused("")}
+                    required
+                  />
+                </div>
               </div>
-            </div>
+              <button className="su-btn" type="submit" disabled={loading || !form.email.includes("@")}>
+                {loading && <span className="su-spinner" />}
+                {loading ? "Sending Code…" : "Continue →"}
+              </button>
+            </form>
+          )}
 
-            {/* Email */}
-            <div className={`su-field${focused === "email" ? " focused" : ""}`}>
-              <div className="su-label-row">Email Address</div>
-              <div className="su-iw">
-                <input
-                  type="email" name="email"
-                  placeholder="you@example.com"
-                  className={`su-input${form.email.includes("@") ? " valid" : ""}`}
-                  onChange={handleChange}
-                  onFocus={() => setFocused("email")}
-                  onBlur={() => setFocused("")}
-                  required
-                />
+          {/* === STEP 2: OTP === */}
+          {step === 2 && (
+            <form onSubmit={handleVerifyOtp} className="su-form">
+              <div className={`su-field${focused === "otp" ? " focused" : ""}`}>
+                <div className="su-label-row">Confirmation Code</div>
+                <div className="su-iw">
+                  <input
+                    type="text" name="otp"
+                    placeholder="000000"
+                    maxLength={6}
+                    className={`su-input otp-input${form.otp.length === 6 ? " valid" : ""}`}
+                    value={form.otp}
+                    onChange={handleChange}
+                    onFocus={() => setFocused("otp")}
+                    onBlur={() => setFocused("")}
+                    required
+                  />
+                </div>
               </div>
-            </div>
+              <button className="su-btn" type="submit" disabled={loading || form.otp.length < 6}>
+                {loading && <span className="su-spinner" />}
+                {loading ? "Verifying…" : "Verify Code"}
+              </button>
+              <button type="button" className="su-back-btn" onClick={() => { setStep(1); setError(""); }}>
+                Change Email Address
+              </button>
+            </form>
+          )}
 
-            {/* Password */}
-            <div className={`su-field${focused === "password" ? " focused" : ""}`}>
-              <div className="su-label-row">Password</div>
-              <div className="su-iw">
-                <input
-                  type={showPass ? "text" : "password"}
-                  name="password"
-                  placeholder="Create a strong password"
-                  className={`su-input${form.password.length >= 6 ? " valid" : form.password.length > 0 ? " invalid" : ""}`}
-                  onChange={handleChange}
-                  onFocus={() => setFocused("password")}
-                  onBlur={() => setFocused("")}
-                  required
-                />
-                <button type="button" className="su-eye" onClick={() => setShowPass(!showPass)} tabIndex={-1}>
-                  {showPass ? <EyeOff /> : <EyeOpen />}
-                </button>
-              </div>
-              {form.password && (
-                <div className="su-strength">
-                  <div className="su-bars">
-                    {[1,2,3,4,5].map(n => (
-                      <div key={n} className={`su-bar${strength.score >= n ? " filled" : ""}`}
-                        style={{ "--sc": strength.color }} />
-                    ))}
-                  </div>
-                  <div className="su-str-row">
-                    <div className="su-rules">
-                      {rules.map(r => (
-                        <div key={r.label} className={`su-rule${r.met ? " met" : ""}`}>
-                          <div className="su-rule-dot" />{r.label}
-                        </div>
+          {/* === STEP 3: DETAILS === */}
+          {step === 3 && (
+            <form onSubmit={handleRegister} className="su-form">
+              <div className={`su-field${focused === "password" ? " focused" : ""}`}>
+                <div className="su-label-row">Password</div>
+                <div className="su-iw">
+                  <input
+                    type={showPass ? "text" : "password"}
+                    name="password"
+                    placeholder="Create a strong password"
+                    className={`su-input${form.password.length >= 6 ? " valid" : form.password.length > 0 ? " invalid" : ""}`}
+                    value={form.password}
+                    onChange={handleChange}
+                    onFocus={() => setFocused("password")}
+                    onBlur={() => setFocused("")}
+                    required
+                  />
+                  <button type="button" className="su-eye" onClick={() => setShowPass(!showPass)} tabIndex={-1}>
+                    {showPass ? <EyeOff /> : <EyeOpen />}
+                  </button>
+                </div>
+                {form.password && (
+                  <div className="su-strength">
+                    <div className="su-bars">
+                      {[1,2,3,4,5].map(n => (
+                        <div key={n} className={`su-bar${strength.score >= n ? " filled" : ""}`}
+                          style={{ "--sc": strength.color }} />
                       ))}
                     </div>
-                    <span className="su-str-label" style={{ color: strength.color }}>{strength.label}</span>
+                    <div className="su-str-row">
+                      <div className="su-rules">
+                        {rules.map(r => (
+                          <div key={r.label} className={`su-rule${r.met ? " met" : ""}`}>
+                            <div className="su-rule-dot" />{r.label}
+                          </div>
+                        ))}
+                      </div>
+                      <span className="su-str-label" style={{ color: strength.color }}>{strength.label}</span>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Confirm Password */}
-            <div className={`su-field${focused === "confirm" ? " focused" : ""}`}>
-              <div className="su-label-row">
-                Confirm Password
-                {confirm && form.password && (
-                  <span className={`su-match${confirm === form.password ? " ok" : " no"}`}>
-                    {confirm === form.password ? "✓ Matches" : "✗ No match"}
-                  </span>
                 )}
               </div>
-              <div className="su-iw">
-                <input
-                  type={showConf ? "text" : "password"}
-                  placeholder="Re-enter your password"
-                  className={`su-input${confirm ? (confirm === form.password ? " valid" : " invalid") : ""}`}
-                  value={confirm}
-                  onChange={(e) => { setConfirm(e.target.value); if (error) setError(""); }}
-                  onFocus={() => setFocused("confirm")}
-                  onBlur={() => setFocused("")}
-                  required
-                />
-                <button type="button" className="su-eye" onClick={() => setShowConf(!showConf)} tabIndex={-1}>
-                  {showConf ? <EyeOff /> : <EyeOpen />}
-                </button>
+
+              <div className={`su-field${focused === "confirm" ? " focused" : ""}`}>
+                <div className="su-label-row">
+                  Confirm Password
+                  {confirm && form.password && (
+                    <span className={`su-match${confirm === form.password ? " ok" : " no"}`}>
+                      {confirm === form.password ? "✓ Matches" : "✗ No match"}
+                    </span>
+                  )}
+                </div>
+                <div className="su-iw">
+                  <input
+                    type={showConf ? "text" : "password"}
+                    placeholder="Re-enter your password"
+                    className={`su-input${confirm ? (confirm === form.password ? " valid" : " invalid") : ""}`}
+                    value={confirm}
+                    onChange={(e) => { setConfirm(e.target.value); if (error) setError(""); }}
+                    onFocus={() => setFocused("confirm")}
+                    onBlur={() => setFocused("")}
+                    required
+                  />
+                  <button type="button" className="su-eye" onClick={() => setShowConf(!showConf)} tabIndex={-1}>
+                    {showConf ? <EyeOff /> : <EyeOpen />}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <button className="su-btn" type="submit" disabled={loading}>
-              {loading && <span className="su-spinner" />}
-              {loading ? "Creating Account…" : "Create Account →"}
-            </button>
-          </form>
+              <div className={`su-field${focused === "name" ? " focused" : ""}`}>
+                <div className="su-label-row">Full Name</div>
+                <div className="su-iw">
+                  <input
+                    type="text" name="name"
+                    placeholder="Your full name"
+                    className={`su-input${form.name.length > 1 ? " valid" : ""}`}
+                    value={form.name}
+                    onChange={handleChange}
+                    onFocus={() => setFocused("name")}
+                    onBlur={() => setFocused("")}
+                    required
+                  />
+                </div>
+              </div>
 
-          <GoogleLoginButton />
+              <button className="su-btn" type="submit" disabled={loading}>
+                {loading && <span className="su-spinner" />}
+                {loading ? "Creating Account…" : "Create Account →"}
+              </button>
+            </form>
+          )}
 
-          <div className="su-footer">
-            <p>Already have an account? <Link to="/login">Back to Login</Link></p>
-          </div>
+          {step === 1 && (
+            <>
+              <GoogleLoginButton />
+              <div className="su-footer">
+                <p>Already have an account? <Link to="/login">Back to Login</Link></p>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
