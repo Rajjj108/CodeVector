@@ -35,7 +35,7 @@ questions.forEach((q) => {
   });
 
   if (images.length > 0) {
-    imagesIndex[`LC_${q.problem_id}`] = images;
+    imagesIndex[`CV_${q.problem_id}`] = images;
   }
 });
 

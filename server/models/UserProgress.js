@@ -9,7 +9,7 @@ const progressSchema = new mongoose.Schema(
     },
 
     problemId: {
-      type: String,   // LC_xx string IDs, not Mongo ObjectIds
+      type: String,   // CV_xx string IDs, not Mongo ObjectIds
       required: true,
     },
 

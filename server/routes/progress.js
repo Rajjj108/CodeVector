@@ -65,7 +65,7 @@ router.post("/update", protect, async (req, res) => {
   }
 });
 
-// Lightweight: return only solved problem IDs (e.g. ["LC_1", "LC_42"])
+// Lightweight: return only solved problem IDs (e.g. ["CV_1", "CV_42"])
 // Used by DsaTracker to mark question rows without heavy payload
 router.get("/solved-ids", protect, async (req, res) => {
   try {
@@ -74,7 +74,7 @@ router.get("/solved-ids", protect, async (req, res) => {
       { userId, status: { $in: ["Solved", "solved"] } },
       { problemId: 1, status: 1, _id: 0 }
     ).lean();
-    // Return map { "LC_1": "Solved", "LC_42": "Revision" }
+    // Return map { "CV_1": "Solved", "CV_42": "Revision" }
     const map = {};
     for (const r of records) map[r.problemId] = r.status;
     res.json(map);

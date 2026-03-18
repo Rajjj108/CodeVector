@@ -7,7 +7,7 @@ const res = await fetch(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      problemId: "LC_1",
+      problemId: "CV_1",
       language: "javascript",
       code: "console.log('hello')",
       timeTaken: 100,

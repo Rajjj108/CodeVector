@@ -33,7 +33,7 @@
 
 CodeVektor is a full-stack DSA and interview prep platform that combines a real-time code judge, AI-powered code review, and deep progress analytics — all wrapped in a dark, glassmorphic UI driven by GSAP animations.
 
-Whether you're grinding LeetCode-style problems, practicing mock interviews, or tracking your daily streak, CodeVektor gives you everything in one place.
+Whether you're grinding CodeVector-style problems, practicing mock interviews, or tracking your daily streak, CodeVektor gives you everything in one place.
 
 ---
 

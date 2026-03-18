@@ -20,7 +20,7 @@ const questionsArray = rawData.questions;
 console.log("Total Raw Questions:", questionsArray.length);
 
 const formatted = questionsArray.map((q) => ({
-  id: `LC_${q.problem_id}`,
+  id: `CV_${q.problem_id}`,
   title: q.title,
   slug: q.problem_slug,
   topic: q.topics?.[0] || "General",

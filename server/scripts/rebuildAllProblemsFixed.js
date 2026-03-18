@@ -2,7 +2,7 @@
  * rebuildAllProblemsFixed.js
  *
  * Reads merged_problems.json (raw) and writes allProblems.json with:
- *   - id:         "LC_{frontend_id}"
+ *   - id:         "CV_{frontend_id}"
  *   - title
  *   - difficulty
  *   - topic:      first tag (primary)
@@ -58,7 +58,7 @@ const formatted = problemsArray
 
     if (!frontendId) return null; // skip problems without id
 
-    const id     = `LC_${frontendId}`;
+    const id     = `CV_${frontendId}`;
     const topics = p.topics || p.topicTags || p.tags || [];
 
     return {

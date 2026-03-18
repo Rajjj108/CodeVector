@@ -12,7 +12,7 @@ const DIFF = {
   hard:   { label: "HARD",   color: "#f87171", glow: "rgba(248,113,113,0.45)", border: "rgba(248,113,113,0.35)", icon: "☰" },
 };
 
-// Total questions on LeetCode (static reference)
+// Total questions on CodeVector (static reference)
 const TOTALS = { easy: 869, medium: 1829, hard: 815 };
 
 const SolvedStats = ({ compact = false, refreshTrigger = 0 }) => {

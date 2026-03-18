@@ -4,7 +4,7 @@
  * POST /api/code/run   — runs against visible test cases, returns per-case results
  * POST /api/code/submit — runs against all test cases + saves submission (wraps submissionController logic cleanly)
  *
- * The key insight: LeetCode-style inputs like "nums = [2,7,11,15], target = 9"
+ * The key insight: CodeVector-style inputs like "nums = [2,7,11,15], target = 9"
  * cannot be piped to stdin. We build a per-language harness that:
  *  1. Wraps the user's Solution/function code
  *  2. Evaluates the parsed input and calls the function
@@ -33,7 +33,7 @@ const getQuestions = () => {
 
 /* ══════════════════════════════════════════════════════════════════
    OUTPUT NORMALIZATION
-   Handles LeetCode "custom judge" outputs like "2, nums = [2,2,_,_]"
+   Handles CodeVector "custom judge" outputs like "2, nums = [2,2,_,_]"
    and pseudocode test cases that should be skipped.
 ══════════════════════════════════════════════════════════════════ */
 
@@ -43,7 +43,7 @@ const getQuestions = () => {
  */
 export const isValidTestCase = (tc) => {
   const input = (tc.input || "");
-  // Skip if input looks like Java/C++ pseudocode or LeetCode description blocks
+  // Skip if input looks like Java/C++ pseudocode or CodeVector description blocks
   if (input.includes("//") && input.includes("assert")) return false;
   if (/int\[\]|int \w+ =|sort\(/.test(input)) return false;
   if (input.trim().length === 0) return false;
@@ -52,7 +52,7 @@ export const isValidTestCase = (tc) => {
 
 /**
  * Normalize expected output for comparison.
- * LeetCode custom judge problems output like:
+ * CodeVector custom judge problems output like:
  *   "2, nums = [2,2,_,_]"  →  just compare "2"
  *   "5, nums = [0,1,4,0,3,_,_,_]"  →  just compare "5"
  *   "[0,1]"  →  compare "[0,1]" as-is
@@ -93,7 +93,7 @@ const ensureDir = (dir) => {
 
 /**
  * JavaScript harness.
- * Parses the LeetCode-style input string (e.g. "nums = [2,7,11,15], target = 9")
+ * Parses the CodeVector-style input string (e.g. "nums = [2,7,11,15], target = 9")
  * into a JS object, then calls every exported function in userCode.
  */
 const buildJsHarness = (userCode, inputStr) => {

@@ -19,7 +19,7 @@ const getAllProblems = () => {
   if (_cachedProblems) return _cachedProblems;
 
   // allProblems.json (rebuilt by rebuildAllProblemsFixed.js) has
-  // correct LC_* ids and real topics[] arrays.
+  // correct CV_* ids and real topics[] arrays.
   _cachedProblems = loadJSON(
     "server/data/question-bank/indexes/allProblems.json"
   );
@@ -101,7 +101,7 @@ export const getQuestions = (req, res) => {
 export const getQuestionById = (req, res) => {
   try {
     const allProblems = getAllProblems();
-    const targetId    = req.params.id; // e.g. "LC_1"
+    const targetId    = req.params.id; // e.g. "CV_1"
 
     // First, try the lightweight allProblems index
     const shallow = allProblems.find((p) => p.id === targetId);
@@ -120,7 +120,7 @@ export const getQuestionById = (req, res) => {
 
       const raw = rawArr.find((p) => {
         const fid = p.frontend_id || p.frontendId || p.problem_id;
-        return fid && `LC_${fid}` === targetId;
+        return fid && `CV_${fid}` === targetId;
       });
 
       if (raw) {

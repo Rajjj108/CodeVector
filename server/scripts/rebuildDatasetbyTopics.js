@@ -25,7 +25,7 @@ const formatted = raw.map((p, i) => ({
 
   id:
     p.frontendId
-      ? `LC_${p.frontendId}`
+      ? `CV_${p.frontendId}`
       : `GEN_${i + 1}`,
 
   title: p.title || p.name,

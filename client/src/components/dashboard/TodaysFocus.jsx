@@ -33,7 +33,7 @@ const Ring = ({ solved, total = 4, size = 52, stroke = 4 }) => {
 
 const TodaysFocus = () => {
   const [problems,  setProblems]  = useState([]);
-  const [solvedIds, setSolvedIds] = useState({});   // { "LC_1": "Solved" }
+  const [solvedIds, setSolvedIds] = useState({});   // { "CV_1": "Solved" }
   const [topic,     setTopic]     = useState("");
   const [loading,   setLoading]   = useState(true);
   const containerRef = useRef(null);
@@ -102,7 +102,7 @@ const TodaysFocus = () => {
     </div>
   );
 
-  // Check by _id or frontendId (LC_xx format) against the solved map
+  // Check by _id or frontendId (CV_xx format) against the solved map
   const isSolved = (p) => {
     const id = p._id || p.frontendId || p.id;
     const st = solvedIds[id];
